@@ -1,3 +1,6 @@
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
+
 const images = [
   {
     preview:
@@ -64,25 +67,43 @@ const images = [
   },
 ];
 
-
-
-
 const gallery = document.querySelector('.gallery');
-const galleryLink = document.querySelector('.gallery-link');
-
-function createMarkup(arr) {
-  return arr.map(({ preview, original, description }) => `
-  <li class="gallery-item" ">
-    <a class="gallery-link" href="large-image.jpg">
-        <img class="gallery-image"
-          src="${preview}" 
-          data-source="${original}" 
-          alt="${description}"/>
-    </a>
+const galleryItems = images.map(({ preview, original, description }) => {
+  return `
+  <li class="gallery-item">
+  <a class="gallery-link" href="${original}">
+  <img src="${preview}" class="gallery-image" alt="${description}" loading="lazy"/>
+  </a>
   </li>
-`).join('')
-};
+  `
+    ;
+}).join('')
 
-gallery.insertAdjacentHTML('afterbegin', createMarkup(images));
+gallery.insertAdjacentHTML('afterbegin', galleryItems);
 
+const customStyle = document.createElement('style');
+        customStyle.textContent = `
+            .gallery {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                list-style: none;
+                padding: 0;
+                margin: 24px 156px;
+            }
+            .gallery-item {
+                width: calc((100% - 48px) / 3);
+            }
+            .gallery img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+        `;
+document.head.appendChild(customStyle);
 
+const imageGallery = new SimpleLightbox('.gallery a', { 
+    captionsData: 'alt',
+    captionPosition: 'bottom',
+    captionDelay: 250
+});
